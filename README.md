@@ -73,7 +73,6 @@ mvn -pl mscartoes test
 
 🔧 Como rodar
 🟢 1. Ambiente de Desenvolvimento (DEV)
-
 No IntelliJ:
  1. Defina o profile como dev
      Nas configurações de run:
@@ -94,6 +93,12 @@ No IntelliJ:
      Keycloak pode não ser obrigatório
      Swagger funciona sem JWT
 🟡 2. Ambiente de Produção (Docker)
-
 Suba os stacks completos com:
 docker compose up -d --build
+Isso iniciará:
+Eureka Server
+API Gateway
+msclientes
+mscartoes
+msavaliadorcredito
+(e demais serviços configurados)
