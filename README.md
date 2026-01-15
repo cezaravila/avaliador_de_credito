@@ -1,3 +1,6 @@
+# Avaliador de Crédito
+![Build Status](https://github.com/cezaravila/avaliador_de_credito/actions/workflows/ci.yml/badge.svg)
+
 🏦 Sistema de Avaliação de Crédito  
 Microserviços com Spring Boot, Spring Cloud, Keycloak, Feign, Eureka, Gateway e Docker
 
