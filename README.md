@@ -168,6 +168,6 @@ Excelente demonstração de arquitetura moderna para entrevistas.
 ------------------------------------------------------------
 
 ## 👨‍💻 Autor
-Cezar de Oliveira Ávila  
+Cezar de Oliveira Avila  
 Campo Grande – MS  
 Developer Programmer
