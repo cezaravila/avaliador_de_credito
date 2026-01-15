@@ -1,4 +1,3 @@
-# Avaliador de Crédito
 ![Build Status](https://github.com/cezaravila/avaliador_de_credito/actions/workflows/ci.yml/badge.svg)
 
 🏦 Sistema de Avaliação de Crédito  
