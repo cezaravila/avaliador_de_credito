@@ -93,3 +93,7 @@ No IntelliJ:
      A segurança é simplificada
      Keycloak pode não ser obrigatório
      Swagger funciona sem JWT
+🟡 2. Ambiente de Produção (Docker)
+
+Suba os stacks completos com:
+docker compose up -d --build
