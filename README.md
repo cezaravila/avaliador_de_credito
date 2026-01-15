@@ -1,102 +1,80 @@
+# 🏦 Avaliador de Crédito
+
 ![Build Status](https://github.com/cezaravila/avaliador_de_credito/actions/workflows/ci.yml/badge.svg)
 
-🏦 Sistema de Avaliação de Crédito  
-Microserviços com Spring Boot, Spring Cloud, Keycloak, Feign, Eureka, Gateway e Docker
+Projeto de microsserviços com Spring Boot, Spring Cloud, Eureka, API Gateway, Keycloak, Docker e integração contínua com GitHub Actions.
 
-Este projeto implementa um ecossistema completo de microserviços para avaliação de crédito utilizando arquitetura moderna, autenticação via JWT (Keycloak) e comunicação interna com propagação de token entre micros.
+O objetivo deste repositório é demonstrar um sistema completo de microsserviços para avaliação de crédito, com:
 
-Desenvolvido com foco em **boas práticas**, **padronização profissional** e **ambiente dev vs produção bem separados**, ideal para portfólio, estudo e demonstração técnica em entrevistas.
-
----
-
-## 🚀 Arquitetura Geral
-
-A solução é composta pelos seguintes serviços:
-
-core-config  
-eurekaserver  
-msclientes  
-mscartoes  
-msavaliadorcredito  
-mscloudgateway  
-
-Fluxo:
-
-CLIENTE → Gateway → Micros → Feign → Token JWT propagado
+- Autenticação via JWT (Bearer Token)
+- Descoberta de serviços (Eureka)
+- API Gateway
+- Comunicação entre micros com Feign
+- Perfis de execução (dev/prod)
+- Docker Compose para orquestração
+- Pipeline CI (Maven + GitHub Actions)
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 🚀 Tecnologias
 
-- Java 17  
-- Spring Boot 3.4.x  
-- Spring Cloud  
-- Spring Security (OAuth2 Resource Server / JWT)  
-- OpenFeign  
-- Eureka Server  
-- Spring Cloud Gateway  
-- Swagger / Springdoc OpenAPI  
-- Docker & Docker Compose  
-- H2 Database (dev)
-
----
-
-## 🧩 Microserviços
-
-### msclientes
-- CRUD de clientes  
-- JWT em produção  
-- Swagger ativo  
-
-### mscartoes
-- Cadastro e consulta de cartões  
-- Banco relacional  
-- JWT ativo  
-
-### msavaliadorcredito
-- Orquestrador  
-- Chamada Feign com propagação de token JWT  
-- Endpoint principal: /situacao-cliente  
-
-### Gateway
-- Entrada única  
-- Validação JWT  
-- Roteamento inteligente  
-
-### Eureka
-- Registro e descoberta  
-- Healthchecks  
-
-### Core-Config
-- Configuração de segurança DEV + PROD  
-- Swagger liberado em ambos  
+| Categoria      | Tecnologias |
+|---------------|-------------|
+| Linguagem     | Java 17 |
+| Framework     | Spring Boot, Spring Cloud |
+| API Docs      | Swagger / Springdoc |
+| Segurança     | Spring Security + OAuth2 JWT + Keycloak |
+| Service Discovery | Eureka Server |
+| Routing / API | Spring Cloud Gateway |
+| Comunicação entre Micros | OpenFeign |
+| Contêineres   | Docker / Docker Compose |
+| CI/CD         | GitHub Actions |
+| Testes        | JUnit 5 |
 
 ---
 
-## 🔐 Segurança
+## 🏗️ Arquitetura
 
-### DEV (IntelliJ)
-- Segurança simplificada  
-- Basic Auth  
-- Sem Keycloak  
-- Swagger aberto  
+O projeto é composto por múltiplos módulos:
 
-### PRODUÇÃO (Docker)
-- Keycloak como Authorization Server  
-- Micros como Resource Servers  
-- JWT obrigatório  
-- Swagger exige Bearer Token  
-- Feign repassa token automaticamente  
+core-config
+eurekaserver
+msclientes
+mscartoes
+msavaliadorcredito
+mscloudgateway
 
----
 
-## 🐳 Executando via Docker
+Fluxo básico de requisição (exemplo):
 
-mvn clean install  
-docker compose up -d --build  
+Cliente → API Gateway → msavaliadorcredito → msclientes / mscartoes
 
-Gateway: http://localhost:8080  
-Eureka: http://localhost:8761  
+
+- O **API Gateway** atua como ponto de entrada.
+- Serviços se descobrem via **Eureka**.
+- Chamadas internas utilizam **Feign Clients** com propagação automática do token JWT.
+- Cada microserviço pode ter seu próprio Swagger para documentação.
 
 ---
+
+## 🧪 Testes
+
+Testes unitários básicos estão configurados para todos os módulos.  
+Em especial, o `mscartoes` possui um teste simples que garante que o módulo está configurado corretamente (sem subir contexto completo).
+
+Você pode rodar:
+
+```bash
+mvn clean verify
+
+Ou de forma isolada em um módulo:
+
+mvn -pl mscartoes test
+
+🔧 Como rodar
+🟢 1. Ambiente de Desenvolvimento (DEV)
+
+No IntelliJ:
+ 1. Defina o profile como dev
+     Nas configurações de run:
 
