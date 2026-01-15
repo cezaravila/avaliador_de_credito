@@ -95,10 +95,10 @@ mvn -pl mscartoes test
 🟡 2. Ambiente de Produção (Docker)
       Suba os stacks completos com:
         docker compose up -d --build
-        Isso iniciará:
-        Eureka Server
-        API Gateway
-        msclientes
-        mscartoes
-        msavaliadorcredito
-        (e demais serviços configurados)
+Isso iniciará:
+Eureka Server
+API Gateway
+msclientes
+mscartoes
+msavaliadorcredito
+(e demais serviços configurados)
