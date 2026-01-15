@@ -1,0 +1,104 @@
+version: "3.9"
+
+services:
+  eureka:
+    build: ./eurekaserver
+    container_name: cursoms-container-eureka
+    environment:
+      - SPRING_PROFILES_ACTIVE=production
+    ports:
+      - "8761:8761"
+    networks:
+      - cursoms-network
+
+  rabbitmq:
+    image: rabbitmq:4.2.0-management
+    container_name: cursoms-container-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - cursoms-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4.4
+    container_name: cursoms-container-keycloak
+    command: ["start-dev"]
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    ports:
+      - "8081:8080"
+    networks:
+      - cursoms-network
+
+  msclientes:
+    build: ./msclientes
+    container_name: cursoms-container-clientes
+    environment:
+      - SPRING_PROFILES_ACTIVE=production
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://cursoms-container-keycloak:8080/realms/mscourserealm
+      - EUREKA_SERVER=cursoms-container-eureka
+    ports:
+      - "8082:8080"
+    networks:
+      - cursoms-network
+    depends_on:
+      - eureka
+      - rabbitmq
+
+  mscartoes:
+    build: ./mscartoes
+    container_name: cursoms-container-cartoes
+    environment:
+      - SPRING_PROFILES_ACTIVE=production
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://cursoms-container-keycloak:8080/realms/mscourserealm
+      - RABBITMQ_SERVER=cursoms-container-rabbitmq
+      - EUREKA_SERVER=cursoms-container-eureka
+    ports:
+      - "8083:8080"
+    networks:
+      - cursoms-network
+    depends_on:
+      - eureka
+      - rabbitmq
+
+  msavaliadorcredito:
+    build: ./msavaliadorcredito
+    container_name: cursoms-container-avaliador
+    environment:
+      - SPRING_PROFILES_ACTIVE=production
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://cursoms-container-keycloak:8080/realms/mscourserealm
+      - RABBITMQ_SERVER=cursoms-container-rabbitmq
+      - EUREKA_SERVER=cursoms-container-eureka
+    ports:
+      - "8084:8080"
+    networks:
+      - cursoms-network
+    depends_on:
+      - eureka
+      - rabbitmq
+      - keycloak
+
+  mscloudgateway:
+    build: ./mscloudgateway
+    container_name: cursoms-container-gateway
+    environment:
+      - SPRING_PROFILES_ACTIVE=production
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://cursoms-container-keycloak:8080/realms/mscourserealm
+      - EUREKA_SERVER=cursoms-container-eureka
+      - KEYCLOAK_SERVER=cursoms-container-keycloak
+      - KEYCLOAK_PORT=8081
+    ports:
+      - "8080:8080"
+    networks:
+      - cursoms-network
+    depends_on:
+      - eureka
+      - msclientes
+      - mscartoes
+      - msavaliadorcredito
+
+networks:
+  cursoms-network:
+    external: true

@@ -1,10 +1,5 @@
-FROM maven:3.8-openjdk-17 as build
+FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
-COPY . .
-RUN mvn clean package -DskipTests
-
-FROM openjdk:17.0.12
-WORKDIR /app
-COPY --from=build ./app/target/*.jar ./app.jar
+COPY target/*.jar app.jar
 EXPOSE 8761
 ENTRYPOINT java -jar app.jar

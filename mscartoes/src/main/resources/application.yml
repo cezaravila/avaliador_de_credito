@@ -6,9 +6,11 @@ spring:
     port: 5672
     username: guest
     password: guest
+  profiles:
+    active: dev
 
 server:
-  port: 0
+  port: 8083
 
 eureka:
   client:
@@ -21,12 +23,38 @@ mq:
   queues:
     emissao-cartoes: emissao-cartoes
 
+logging:
+  file:
+    name: ./logs/log-file.log
+
+# ANTIGO
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'
+
+# NOVO
+
 management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
 
-logging:
-  file:
-    name: ./logs/log-file.log
+resilience4j:
+  circuitbreaker:
+    instances:
+      clientes:
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+  retry:
+    instances:
+      clientes:
+        max-attempts: 3
+        wait-duration: 1s
