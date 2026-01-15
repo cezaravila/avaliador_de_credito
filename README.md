@@ -77,4 +77,25 @@ mvn -pl mscartoes test
 No IntelliJ:
  1. Defina o profile como dev
      Nas configurações de run:
+SPRING_PROFILES_ACTIVE=dev
+Execute os microsserviços individualmente:
 
+eurekaserver
+
+msclientes
+
+mscartoes
+
+msavaliadorcredito
+
+mscloudgateway
+
+Acesse os Swaggers dos serviços:
+
+msclientes → http://localhost:8081/swagger-ui.html
+
+mscartoes → http://localhost:8082/swagger-ui.html
+
+msavaliadorcredito → http://localhost:8083/swagger-ui.html
+
+mscloudgateway → http://localhost:8080/swagger-ui.html
