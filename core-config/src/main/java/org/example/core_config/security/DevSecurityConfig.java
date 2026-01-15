@@ -22,6 +22,5 @@ public class DevSecurityConfig {
                         .anyRequest().permitAll()  // dev: sem dor de cabeça
                 );
         return http.build();
-        
     }
 }
