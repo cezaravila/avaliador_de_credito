@@ -73,32 +73,32 @@ mvn -pl mscartoes test
 
 🔧 Como rodar
 🟢 1. Ambiente de Desenvolvimento (DEV)
-  No IntelliJ:
-   1. Defina o profile como dev
-       Nas configurações de run:
-       SPRING_PROFILES_ACTIVE=dev
-   2. Execute os microsserviços individualmente:
-       eurekaserver
-       msclientes
-       mscartoes
-       msavaliadorcredito
-       mscloudgateway
-   3. Acesse os Swaggers dos serviços:
-       msclientes → http://localhost:8081/swagger-ui.html
-       mscartoes → http://localhost:8082/swagger-ui.html
-       msavaliadorcredito → http://localhost:8083/swagger-ui.html
-       mscloudgateway → http://localhost:8080/swagger-ui.html
-   Nesse modo:
-       A segurança é simplificada
-       Keycloak pode não ser obrigatório
-       Swagger funciona sem JWT
+      No IntelliJ:
+        1. Defina o profile como dev
+           Nas configurações de run:
+           SPRING_PROFILES_ACTIVE=dev
+        2. Execute os microsserviços individualmente:
+           eurekaserver
+           msclientes
+           mscartoes
+           msavaliadorcredito
+           mscloudgateway
+        3. Acesse os Swaggers dos serviços:
+           msclientes → http://localhost:8081/swagger-ui.html
+           mscartoes → http://localhost:8082/swagger-ui.html
+           msavaliadorcredito → http://localhost:8083/swagger-ui.html
+           mscloudgateway → http://localhost:8080/swagger-ui.html
+        Nesse modo:
+           A segurança é simplificada
+           Keycloak pode não ser obrigatório
+           Swagger funciona sem JWT
 🟡 2. Ambiente de Produção (Docker)
-Suba os stacks completos com:
-docker compose up -d --build
-Isso iniciará:
-Eureka Server
-API Gateway
-msclientes
-mscartoes
-msavaliadorcredito
-(e demais serviços configurados)
+      Suba os stacks completos com:
+        docker compose up -d --build
+        Isso iniciará:
+        Eureka Server
+        API Gateway
+        msclientes
+        mscartoes
+        msavaliadorcredito
+        (e demais serviços configurados)
