@@ -1,6 +1,20 @@
 version: "3.9"
 
 services:
+  postgres:
+    image: postgres:18
+    container_name: postgres-container-avaliador
+    environment:
+      POSTGRES_DB: avaliador_credito
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    networks:
+      - cursoms-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   eureka:
     build: ./eurekaserver
     container_name: cursoms-container-eureka
@@ -46,6 +60,7 @@ services:
     depends_on:
       - eureka
       - rabbitmq
+      - postgres
 
   mscartoes:
     build: ./mscartoes
@@ -62,6 +77,7 @@ services:
     depends_on:
       - eureka
       - rabbitmq
+      - postgres
 
   msavaliadorcredito:
     build: ./msavaliadorcredito
@@ -102,3 +118,6 @@ services:
 networks:
   cursoms-network:
     external: true
+
+volumes:
+  postgres_data:

@@ -1,6 +1,13 @@
 spring:
   application:
     name: msclientes
+  datasource:
+    url: jdbc:postgresql://postgres:5432/avaliador_credito
+    username: admin
+    password: admin
+  jpa:
+    hibernate:
+      ddl-auto: none
 
 server:
   port: 8080
