@@ -29,7 +29,7 @@ public class EmissaoCartaoSubscriber {
             ClienteCartao clienteCartao = new ClienteCartao();
             clienteCartao.setCartao(cartao);
             clienteCartao.setCpf(dados.getCpf());
-            clienteCartao.setLimite(dados.getLimiteLiberado());
+            clienteCartao.setLimiteAprovado(dados.getLimiteLiberado());
 
             clienteCartaoRepository.save(clienteCartao);
 

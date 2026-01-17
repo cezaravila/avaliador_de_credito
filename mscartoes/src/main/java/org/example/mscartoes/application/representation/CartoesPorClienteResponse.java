@@ -19,7 +19,7 @@ public class CartoesPorClienteResponse {
         return new CartoesPorClienteResponse(
                 model.getCartao().getNome(),
                 model.getCartao().getBandeira().toString(),
-                model.getLimite()
+                model.getLimiteAprovado()
         );
     }
 }

@@ -19,17 +19,14 @@ public class Cliente {
     @Column(nullable = false)
     private Integer idade;
 
-    @Column(precision = 15, scale = 2)
-    private Double renda;
-
     public Cliente() {
     }
 
-    public Cliente(String cpf, String nome, Integer idade, Double renda) {
+    public Cliente(Long id, String cpf, String nome, Integer idade) {
+        this.id = id;
         this.cpf = cpf;
         this.nome = nome;
         this.idade = idade;
-        this.renda = renda;
     }
 
     // getters e setters
@@ -66,11 +63,4 @@ public class Cliente {
         this.idade = idade;
     }
 
-    public Double getRenda() {
-        return renda;
-    }
-
-    public void setRenda(Double renda) {
-        this.renda = renda;
-    }
 }

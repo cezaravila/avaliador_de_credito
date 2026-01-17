@@ -2,6 +2,7 @@ package org.example.mscartoes.infra.repository;
 
 import org.example.mscartoes.domain.Cartao;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.math.BigDecimal;
 import java.util.List;

@@ -6,14 +6,14 @@ services:
     container_name: postgres-container-avaliador
     environment:
       POSTGRES_DB: avaliador_credito
-      POSTGRES_USER: admin
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
     ports:
       - "5432:5432"
     networks:
       - cursoms-network
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
 
   eureka:
     build: ./eurekaserver

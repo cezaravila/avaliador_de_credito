@@ -9,10 +9,8 @@
         <relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<groupId>io.github.cursodsousa</groupId>
+    <artifactId>msclientes</artifactId>
     <version>1.0-SNAPSHOT</version>
-	<artifactId>msclientes</artifactId>
-	<name>msclientes</name>
 	<description>Clientes Microservices</description>
 
 	<url/>
@@ -58,6 +56,13 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <!--  /NOVO MODELO -->
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
 	</dependencies>
 
     <build>

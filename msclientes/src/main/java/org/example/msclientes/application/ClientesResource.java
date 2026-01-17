@@ -2,10 +2,10 @@ package org.example.msclientes.application;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.example.msclientes.application.representation.ClienteSaveRequest;
-import org.example.msclientes.domain.Cliente;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.msclientes.application.representation.ClienteSaveRequest;
+import org.example.msclientes.domain.Cliente;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -44,11 +44,16 @@ public class ClientesResource {
 
     @GetMapping(value = "dados-cliente", params = "cpf")
     @Operation(summary = "Retorna os dados do cliente")
-    public ResponseEntity dadosCliente(@RequestParam("cpf") String cpf){
-        Optional<Cliente> cliente = service.getByCPF(cpf);
-        if(cliente.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(cliente);
+    public ResponseEntity<Cliente> dadosCliente(@RequestParam("cpf") String cpf){
+        return service.getByCPF(cpf)
+                .map(cliente -> ResponseEntity.ok(
+                        new Cliente(
+                                cliente.getId(),
+                                cliente.getCpf(),
+                                cliente.getNome(),
+                                cliente.getIdade()
+                        )
+                ))
+                .orElse(ResponseEntity.notFound().build());
     }
 }
