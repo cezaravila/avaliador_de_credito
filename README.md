@@ -42,7 +42,8 @@ Fluxo:
 - **OpenFeign**
 - **Eureka Server**
 - **Docker + Docker Compose**
-- **H2 Database (DEV)**
+- **PostgreSQL**
+- **Flyway**
 - **GitHub Actions (CI)**
 
 ------------------------------------------------------------
