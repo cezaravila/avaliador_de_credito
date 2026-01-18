@@ -5,9 +5,13 @@ spring:
     url: jdbc:postgresql://postgres:5432/avaliador_credito
     username: postgres
     password: admin
+  flyway:
+    enabled: true
+    schemas: msclientes
+    default-schema: msclientes
   jpa:
-    hibernate:
-      ddl-auto: update
+    properties:
+      hibernate.default_schema: msclientes
 
 server:
   port: 8080

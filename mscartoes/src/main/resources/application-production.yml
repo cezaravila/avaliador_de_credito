@@ -10,9 +10,13 @@ spring:
     url: jdbc:postgresql://postgres:5432/avaliador_credito
     username: postgres
     password: admin
+  flyway:
+    enabled: true
+    schemas: mscartoes
+    default-schema: mscartoes
   jpa:
-    hibernate:
-      ddl-auto: update
+    properties:
+      hibernate.default_schema: mscartoes
 
 server:
   port: 8080
