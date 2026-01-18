@@ -46,21 +46,27 @@ Fluxo:
 - **Docker + Docker Compose**
 - **PostgreSQL**
 - **Flyway**
-- **Keycloak**
 - **RabbitMQ**
+- **Keycloak**
 - **GitHub Actions (CI)**
 
 ------------------------------------------------------------
 
-## 🗄️ Banco de Dados
+## 🗄️ Banco de Dados (sql-version)
 
-- Banco relacional **PostgreSQL** utilizado em DEV e PRODUÇÃO
-- Versionamento de schema com **Flyway**
-- O Hibernate atua apenas como consumidor do schema
-- Criação e evolução da estrutura feitas exclusivamente via migrations SQL
+A branch `sql-version` utiliza **PostgreSQL** e controla o schema via **Flyway**.
+
+- DEV e PRODUÇÃO usam PostgreSQL (muda apenas o hostname/URL de conexão)
+- Versionamento de schema com migrations SQL (Flyway)
+- Hibernate não cria/atualiza tabelas automaticamente: o schema vem das migrations
 - Um schema por microsserviço:
   - `msclientes` → schema `msclientes`
   - `mscartoes` → schema `mscartoes`
+
+### Migrations (Flyway)
+- Local: `src/main/resources/db/migration`
+- `V1__*.sql` → criação inicial (NUNCA editar depois de aplicado)
+- Mudanças futuras: `V2__*.sql`, `V3__*.sql`, ...
 
 ------------------------------------------------------------
 
@@ -123,6 +129,41 @@ docker compose up -d --build
 ```
 Authorization: Bearer SEU_TOKEN_AQUI
 ```
+
+------------------------------------------------------------
+
+## 🔐 Como usar o Keycloak (gerar token)
+
+O projeto utiliza **Keycloak** para autenticação baseada em JWT.
+
+### Acessar o Keycloak
+- Console: http://localhost:8081
+
+### Fluxo básico
+1. Autentique no Keycloak
+2. Obtenha o `access_token`
+3. Envie o token nas requisições:
+
+```
+Authorization: Bearer SEU_TOKEN_AQUI
+```
+
+> Observação: os detalhes de Realm/Client/Usuários dependem do seu `docker-compose.yml` e das configurações do Keycloak no projeto.
+
+------------------------------------------------------------
+
+## 🐰 Como usar o RabbitMQ (validar mensageria)
+
+O projeto utiliza **RabbitMQ** para mensageria assíncrona entre microsserviços.
+
+### Acessar o painel do RabbitMQ
+- Management UI: http://localhost:15672
+
+### O que observar
+- Filas/exchanges criados pela aplicação
+- Mensagens sendo publicadas/consumidas durante o fluxo do sistema
+
+> Observação: usuário/senha do painel estão definidos no `docker-compose.yml`.
 
 ------------------------------------------------------------
 
