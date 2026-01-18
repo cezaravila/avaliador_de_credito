@@ -2,7 +2,7 @@
 # Avaliador de Crédito – Microsserviços
 ![Build Status](https://github.com/cezaravila/avaliador_de_credito/actions/workflows/ci.yml/badge.svg)
 
-Projeto profissional de microsserviços voltado para demonstração em portfólio, incluindo:
+Projeto em microsserviços incluindo:
 
 - Arquitetura distribuída
 - Eureka Service Discovery
@@ -81,7 +81,3 @@ mantendo **Hibernate apenas como consumidor do schema**.
 - DEV: conexão via `localhost`
 - PRODUÇÃO (Docker): conexão via hostname `postgres`
 - A diferença entre ambientes é apenas o profile ativo
-
-### Observação
-Nenhuma funcionalidade anterior foi removida.
-Esta seção **apenas documenta a evolução técnica da branch `sql-version`**.
