@@ -69,9 +69,9 @@ SPRING_PROFILES_ACTIVE=dev
 - Eureka: http://localhost:8761  
 - Gateway: http://localhost:8080  
 - Swagger de cada serviço:
-  - msclientes → http://localhost:8081/swagger-ui.html  
-  - mscartoes → http://localhost:8082/swagger-ui.html  
-  - msavaliadorcredito → http://localhost:8083/swagger-ui.html  
+  - msclientes → http://localhost:8082/swagger-ui.html  
+  - mscartoes → http://localhost:8083/swagger-ui.html  
+  - msavaliadorcredito → http://localhost:8084/swagger-ui.html  
 
 ------------------------------------------------------------
 
