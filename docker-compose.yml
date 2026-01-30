@@ -94,6 +94,7 @@ services:
     networks:
       - cursoms-network
 
+
 ### BEGIN ###########################################
   eureka:
     build: ./eurekaserver
