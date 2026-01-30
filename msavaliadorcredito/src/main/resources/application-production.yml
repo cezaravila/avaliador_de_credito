@@ -2,18 +2,22 @@ spring:
   application:
     name: msavaliadorcredito
   rabbitmq:
-    host: ${RABBITMQ_SERVER}
-    port: 5672
-    username: guest
-    password: guest
-
+    host: ${SPRING_RABBITMQ_HOST}
+    port: ${SPRING_RABBITMQ_PORT}
+    username: ${SPRING_RABBITMQ_USERNAME}
+    password: ${SPRING_RABBITMQ_PASSWORD}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI}
 server:
   port: 8080
 
 eureka:
   client:
     service-url:
-      defaultZone: http://cursoms-eureka-user:ecok-pass-word-vai1@${EUREKA_SERVER}:8761/eureka
+      defaultZone: ${EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE}
   instance:
     instance-id: ${spring.application.name}:${sping.application.instance_id:${random.value}}
 

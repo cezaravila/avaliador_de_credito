@@ -1,0 +1,35 @@
+{
+  "vhosts": [
+    { "name": "/" }
+  ],
+  "exchanges": [
+    {
+      "name": "cartoes.exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "cartoes.emissao.queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "cartoes.exchange",
+      "vhost": "/",
+      "destination": "cartoes.emissao.queue",
+      "destination_type": "queue",
+      "routing_key": "cartoes.emissao",
+      "arguments": {}
+    }
+  ]
+}

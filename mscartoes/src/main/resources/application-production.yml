@@ -2,14 +2,14 @@ spring:
   application:
     name: mscartoes
   rabbitmq:
-    host: ${RABBITMQ_SERVER}
-    port: 5672
-    username: guest
-    password: guest
+    host: ${SPRING_RABBITMQ_HOST}
+    port: ${SPRING_RABBITMQ_PORT}
+    username: ${SPRING_RABBITMQ_USERNAME}
+    password: ${SPRING_RABBITMQ_PASSWORD}
   datasource:
-    url: jdbc:postgresql://postgres:5432/avaliador_credito
-    username: postgres
-    password: admin
+    url: ${POSTGRES_DATASOURCE_URL}
+    username: ${POSTGRES_DATASOURCE_USERNAME}
+    password: ${POSTGRES_DATASOURCE_PASSWORD}
   flyway:
     enabled: true
     schemas: mscartoes
@@ -17,6 +17,11 @@ spring:
   jpa:
     properties:
       hibernate.default_schema: mscartoes
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI}
 
 server:
   port: 8080
@@ -24,7 +29,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://cursoms-eureka-user:ecok-pass-word-vai1@${EUREKA_SERVER}:8761/eureka
+      defaultZone: ${EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE}
   instance:
     instance-id: ${spring.application.name}:${sping.application.instance_id:${random.value}}
 

@@ -1,13 +1,46 @@
 version: "3.9"
 
+x-msavaliadorcredito_mscartoes-env: &msavaliadorcredito_mscartoes-env
+  SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+  SPRING_EUREKA_SERVER: ${SPRING_EUREKA_SERVER}
+  SPRING_RABBITMQ_HOST: ${SPRING_RABBITMQ_HOST}
+  SPRING_RABBITMQ_PORT: ${SPRING_RABBITMQ_PORT}
+  SPRING_RABBITMQ_USERNAME: ${SPRING_RABBITMQ_USERNAME}
+  SPRING_RABBITMQ_PASSWORD: ${SPRING_RABBITMQ_PASSWORD}
+  SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI}
+  POSTGRES_DATASOURCE_URL: ${POSTGRES_DATASOURCE_URL}
+  POSTGRES_DATASOURCE_USERNAME: ${POSTGRES_DATASOURCE_USERNAME}
+  POSTGRES_DATASOURCE_PASSWORD: ${POSTGRES_DATASOURCE_PASSWORD}
+
+  EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://${EUREKA_SECURITY_USER_USERNAME}:${EUREKA_SECURITY_USER_PASSWORD}@${SPRING_EUREKA_SERVER}:8761/eureka
+
+x-mscloudgateway-env: &mscloudgateway-env
+  SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+  SPRING_EUREKA_SERVER: ${SPRING_EUREKA_SERVER}
+  KEYCLOAK_SERVER: ${KEYCLOAK_SERVER}
+  KEYCLOAK_PORT: ${KEYCLOAK_PORT}
+  ISSUER-URI: http://${KEYCLOAK_SERVER}:${KEYCLOAK_PORT}/realms/mscourserealm
+
+  EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://${EUREKA_SECURITY_USER_USERNAME}:${EUREKA_SECURITY_USER_PASSWORD}@${SPRING_EUREKA_SERVER}:8761/eureka
+
+x-msclientes-env: &x-msclientes-env
+  SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+  SPRING_EUREKA_SERVER: ${SPRING_EUREKA_SERVER}
+  SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI}
+  POSTGRES_DATASOURCE_URL: ${POSTGRES_DATASOURCE_URL}
+  POSTGRES_DATASOURCE_USERNAME: ${POSTGRES_DATASOURCE_USERNAME}
+  POSTGRES_DATASOURCE_PASSWORD: ${POSTGRES_DATASOURCE_PASSWORD}
+  EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://${EUREKA_SECURITY_USER_USERNAME}:${EUREKA_SECURITY_USER_PASSWORD}@${SPRING_EUREKA_SERVER}:8761/eureka
+
+
 services:
   postgres:
     image: postgres:16
     container_name: postgres-container-avaliador
     environment:
-      POSTGRES_DB: avaliador_credito
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     networks:
@@ -15,34 +48,61 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql
 
-  eureka:
-    build: ./eurekaserver
-    container_name: cursoms-container-eureka
-    environment:
-      - SPRING_PROFILES_ACTIVE=production
-    ports:
-      - "8761:8761"
-    networks:
-      - cursoms-network
-
   rabbitmq:
     image: rabbitmq:4.2.0-management
     container_name: cursoms-container-rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${SPRING_RABBITMQ_USERNAME}
+      - RABBITMQ_DEFAULT_PASS=${SPRING_RABBITMQ_PASSWORD}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - cursoms-network
+    healthcheck:
+      test: [ "CMD-SHELL", "rabbitmq-diagnostics -q ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  rabbitmq-init:
+    image: curlimages/curl:8.5.0
+    container_name: cursoms-container-rabbitmq-init
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - cursoms-network
+    volumes:
+      - "./docker/rabbitmq/definitions.json:/definitions.json:ro"
+      - "./docker/rabbitmq/init.sh:/init.sh:ro"
+    entrypoint: ["/bin/sh","/init.sh"]
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.4.4
     container_name: cursoms-container-keycloak
-    command: ["start-dev"]
+    command: ["start-dev", "--import-realm"]
     environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_BOOTSTRAP_ADMIN_USERNAME=${KC_BOOTSTRAP_ADMIN_USERNAME}
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=${KC_BOOTSTRAP_ADMIN_PASSWORD}
     ports:
       - "8081:8080"
+    volumes:
+      - ./docker/keycloak/mscourserealm-realm.json:/opt/keycloak/data/import/mscourserealm-realm.json:ro
+    networks:
+      - cursoms-network
+
+### BEGIN ###########################################
+  eureka:
+    build: ./eurekaserver
+    container_name: cursoms-container-eureka
+    environment:
+      - EUREKA_SECURITY_USER_USERNAME=${EUREKA_SECURITY_USER_USERNAME}
+      - EUREKA_SECURITY_USER_PASSWORD=${EUREKA_SECURITY_USER_PASSWORD}
+    ports:
+      - "8761:8761"
     networks:
       - cursoms-network
 
@@ -50,26 +110,20 @@ services:
     build: ./msclientes
     container_name: cursoms-container-clientes
     environment:
-      - SPRING_PROFILES_ACTIVE=production
-      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://cursoms-container-keycloak:8080/realms/mscourserealm
-      - EUREKA_SERVER=cursoms-container-eureka
+      <<: *x-msclientes-env
     ports:
       - "8082:8080"
     networks:
       - cursoms-network
     depends_on:
       - eureka
-      - rabbitmq
       - postgres
 
   mscartoes:
     build: ./mscartoes
     container_name: cursoms-container-cartoes
     environment:
-      - SPRING_PROFILES_ACTIVE=production
-      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://cursoms-container-keycloak:8080/realms/mscourserealm
-      - RABBITMQ_SERVER=cursoms-container-rabbitmq
-      - EUREKA_SERVER=cursoms-container-eureka
+      <<: *msavaliadorcredito_mscartoes-env
     ports:
       - "8083:8080"
     networks:
@@ -83,10 +137,7 @@ services:
     build: ./msavaliadorcredito
     container_name: cursoms-container-avaliador
     environment:
-      - SPRING_PROFILES_ACTIVE=production
-      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://cursoms-container-keycloak:8080/realms/mscourserealm
-      - RABBITMQ_SERVER=cursoms-container-rabbitmq
-      - EUREKA_SERVER=cursoms-container-eureka
+      <<: *msavaliadorcredito_mscartoes-env
     ports:
       - "8084:8080"
     networks:
@@ -100,11 +151,7 @@ services:
     build: ./mscloudgateway
     container_name: cursoms-container-gateway
     environment:
-      - SPRING_PROFILES_ACTIVE=production
-      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://cursoms-container-keycloak:8080/realms/mscourserealm
-      - EUREKA_SERVER=cursoms-container-eureka
-      - KEYCLOAK_SERVER=cursoms-container-keycloak
-      - KEYCLOAK_PORT=8081
+      <<: *mscloudgateway-env
     ports:
       - "8080:8080"
     networks:
@@ -114,10 +161,13 @@ services:
       - msclientes
       - mscartoes
       - msavaliadorcredito
+### END   ###########################################
 
 networks:
   cursoms-network:
-    external: true
+    name: cursoms-network
+    driver: bridge
 
 volumes:
   postgres_data:
+  rabbitmq_data:
