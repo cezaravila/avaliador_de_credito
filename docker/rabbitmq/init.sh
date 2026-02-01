@@ -11,7 +11,7 @@ until curl -s -u bootstrap:bootstrap http://rabbitmq:15672/api/overview >/dev/nu
 done
 
 echo "APPLY DEFINITIONS (POST)"
-curl -v -u bootstrap:bootstrap \
+curl -s -u bootstrap:bootstrap \
   -H "Content-Type: application/json" \
   -X POST \
   --data-binary "@/definitions.json" \

@@ -109,7 +109,7 @@ public class AvaliadorCreditoController {
         try {
             ProtocoloSolicitacaoCartao protocoloSolicitacaoCartao = avaliadorCreditoService
                     .solicitarEmissaoCartao(dados);
-            return ResponseEntity.ok(protocoloSolicitacaoCartao);
+            return ResponseEntity.accepted().body(protocoloSolicitacaoCartao);
         } catch (ErroSolicitacaoCartaoException e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }

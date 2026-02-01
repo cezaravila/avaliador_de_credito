@@ -6,6 +6,9 @@ spring:
     port: ${SPRING_RABBITMQ_PORT}
     username: ${SPRING_RABBITMQ_USERNAME}
     password: ${SPRING_RABBITMQ_PASSWORD}
+    listener:
+      simple:
+        default-requeue-rejected: false
   datasource:
     url: ${POSTGRES_DATASOURCE_URL}
     username: ${POSTGRES_DATASOURCE_USERNAME}
@@ -36,39 +39,3 @@ eureka:
 mq:
   queues:
     emissao-cartoes: emissao-cartoes
-
-logging:
-  file:
-    name: ./logs/log-file.log
-
-# ANTIGO
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: '*'
-
-# NOVO
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics
-  endpoint:
-    health:
-      show-details: when_authorized
-
-resilience4j:
-  circuitbreaker:
-    instances:
-      clientes:
-        sliding-window-size: 10
-        minimum-number-of-calls: 5
-        failure-rate-threshold: 50
-        wait-duration-in-open-state: 10s
-  retry:
-    instances:
-      clientes:
-        max-attempts: 3
-        wait-duration: 1s

@@ -12,16 +12,15 @@ x-msavaliadorcredito_mscartoes-env: &msavaliadorcredito_mscartoes-env
   POSTGRES_DATASOURCE_USERNAME: ${POSTGRES_DATASOURCE_USERNAME}
   POSTGRES_DATASOURCE_PASSWORD: ${POSTGRES_DATASOURCE_PASSWORD}
 
-  EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://${EUREKA_SECURITY_USER_USERNAME}:${EUREKA_SECURITY_USER_PASSWORD}@${SPRING_EUREKA_SERVER}:8761/eureka
+  EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://${EUREKA_SECURITY_USER_USERNAME}:${EUREKA_SECURITY_USER_PASSWORD}@eureka:8761/eureka
 
 x-mscloudgateway-env: &mscloudgateway-env
   SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
   SPRING_EUREKA_SERVER: ${SPRING_EUREKA_SERVER}
   KEYCLOAK_SERVER: ${KEYCLOAK_SERVER}
   KEYCLOAK_PORT: ${KEYCLOAK_PORT}
-  ISSUER-URI: http://${KEYCLOAK_SERVER}:${KEYCLOAK_PORT}/realms/mscourserealm
-
-  EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://${EUREKA_SECURITY_USER_USERNAME}:${EUREKA_SECURITY_USER_PASSWORD}@${SPRING_EUREKA_SERVER}:8761/eureka
+  SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI}
+  EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://${EUREKA_SECURITY_USER_USERNAME}:${EUREKA_SECURITY_USER_PASSWORD}@eureka:8761/eureka
 
 x-msclientes-env: &x-msclientes-env
   SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
@@ -30,7 +29,7 @@ x-msclientes-env: &x-msclientes-env
   POSTGRES_DATASOURCE_URL: ${POSTGRES_DATASOURCE_URL}
   POSTGRES_DATASOURCE_USERNAME: ${POSTGRES_DATASOURCE_USERNAME}
   POSTGRES_DATASOURCE_PASSWORD: ${POSTGRES_DATASOURCE_PASSWORD}
-  EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://${EUREKA_SECURITY_USER_USERNAME}:${EUREKA_SECURITY_USER_PASSWORD}@${SPRING_EUREKA_SERVER}:8761/eureka
+  EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://${EUREKA_SECURITY_USER_USERNAME}:${EUREKA_SECURITY_USER_PASSWORD}@eureka:8761/eureka
 
 
 services:
@@ -51,18 +50,18 @@ services:
   rabbitmq:
     image: rabbitmq:4.2.0-management
     container_name: cursoms-container-rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=${SPRING_RABBITMQ_USERNAME}
       - RABBITMQ_DEFAULT_PASS=${SPRING_RABBITMQ_PASSWORD}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - cursoms-network
     healthcheck:
-      test: [ "CMD-SHELL", "rabbitmq-diagnostics -q ping" ]
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -79,6 +78,7 @@ services:
       - "./docker/rabbitmq/definitions.json:/definitions.json:ro"
       - "./docker/rabbitmq/init.sh:/init.sh:ro"
     entrypoint: ["/bin/sh","/init.sh"]
+    restart: "no"
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.4.4
@@ -87,19 +87,24 @@ services:
     environment:
       - KC_BOOTSTRAP_ADMIN_USERNAME=${KC_BOOTSTRAP_ADMIN_USERNAME}
       - KC_BOOTSTRAP_ADMIN_PASSWORD=${KC_BOOTSTRAP_ADMIN_PASSWORD}
+      - KC_HOSTNAME=host.docker.internal
+      - KC_HOSTNAME_STRICT=false
     ports:
       - "8081:8080"
     volumes:
       - ./docker/keycloak/mscourserealm-realm.json:/opt/keycloak/data/import/mscourserealm-realm.json:ro
     networks:
       - cursoms-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 
 ### BEGIN ###########################################
   eureka:
     build: ./eurekaserver
-    container_name: cursoms-container-eureka
+    container_name: eureka
     environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
       - EUREKA_SECURITY_USER_USERNAME=${EUREKA_SECURITY_USER_USERNAME}
       - EUREKA_SECURITY_USER_PASSWORD=${EUREKA_SECURITY_USER_PASSWORD}
     ports:
@@ -119,6 +124,9 @@ services:
     depends_on:
       - eureka
       - postgres
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
 
   mscartoes:
     build: ./mscartoes
@@ -133,6 +141,8 @@ services:
       - eureka
       - rabbitmq
       - postgres
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   msavaliadorcredito:
     build: ./msavaliadorcredito
@@ -147,6 +157,8 @@ services:
       - eureka
       - rabbitmq
       - keycloak
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   mscloudgateway:
     build: ./mscloudgateway
@@ -162,6 +174,8 @@ services:
       - msclientes
       - mscartoes
       - msavaliadorcredito
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 ### END   ###########################################
 
 networks:

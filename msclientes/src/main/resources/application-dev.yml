@@ -14,4 +14,13 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8081/realms/mscourserealm}
+          issuer-uri: http://host.docker.internal:8081/realms/mscourserealm
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://cursoms-eureka-user:ecok-pass-word-vai1@localhost:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: true
+    hostname: localhost

@@ -7,25 +7,9 @@ spring:
 server:
   port: 8082
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://cursoms-eureka-user:ecok-pass-word-vai1@localhost:8761/eureka
-  instance:
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-
 logging:
   file:
     name: ./logs/log-file.log
-
-# ANTIGO
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: '*'
-
-# NOVO
 
 management:
   endpoints:

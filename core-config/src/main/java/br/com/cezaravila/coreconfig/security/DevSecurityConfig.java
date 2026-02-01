@@ -6,9 +6,12 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import static org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type.SERVLET;
 
 @Configuration
 @Profile("dev")
+@ConditionalOnWebApplication(type = SERVLET)
 public class DevSecurityConfig {
 
     @Bean

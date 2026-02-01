@@ -1,0 +1,5 @@
+spring:
+  security:
+    user:
+      name: ${EUREKA_SECURITY_USER_USERNAME}
+      password: ${EUREKA_SECURITY_USER_PASSWORD}

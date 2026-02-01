@@ -1,12 +1,6 @@
 spring:
   application:
     name: eurekaserver
-  security:
-    basic:
-      enable: true
-    user:
-      name: ${EUREKA_SECURITY_USER_USERNAME}
-      password: ${EUREKA_SECURITY_USER_PASSWORD}
   profiles:
     active: dev
 

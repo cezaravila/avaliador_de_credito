@@ -2136,8 +2136,6 @@
   },
   "clientPolicies" : {
     "policies" : [ ]
-  },
-  "attributes": {
-	"frontendUrl": "http://cursoms-container-keycloak:8080"
   }
+
 }
