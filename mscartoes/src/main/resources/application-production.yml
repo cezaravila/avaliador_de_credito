@@ -1,14 +1,9 @@
 spring:
-  application:
-    name: mscartoes
   rabbitmq:
     host: ${SPRING_RABBITMQ_HOST}
-    port: ${SPRING_RABBITMQ_PORT}
-    username: ${SPRING_RABBITMQ_USERNAME}
-    password: ${SPRING_RABBITMQ_PASSWORD}
-    listener:
-      simple:
-        default-requeue-rejected: false
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:bootstrap}
+    password: ${SPRING_RABBITMQ_PASSWORD:bootstrap}
   datasource:
     url: ${POSTGRES_DATASOURCE_URL}
     username: ${POSTGRES_DATASOURCE_USERNAME}

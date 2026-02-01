@@ -23,14 +23,20 @@ public class EmissaoCartaoConsumer {
 
     @RabbitListener(queues = "cartoes.emissao.queue")
     public void receberSolicitacaoEmissao(DadosSolicitacaoEmissaoCartao dados) {
+
+        // validação mínima (permanente)
+        if (dados == null || dados.idCartao() == null || dados.cpf() == null || dados.cpf().isBlank()) {
+            throw new ErroPermanenteException("Payload inválido");
+        }
+
         try {
             Cartao cartao = cartaoRepository.findById(dados.idCartao())
                     .orElseThrow(() -> new ErroPermanenteException("Cartão não encontrado"));
+
             ClienteCartao clienteCartao = new ClienteCartao();
             clienteCartao.setCartao(cartao);
             clienteCartao.setCpf(dados.cpf());
             clienteCartao.setLimiteAprovado(dados.limiteLiberado());
-
             clienteCartaoRepository.save(clienteCartao);
 
         } catch (ErroPermanenteException e) {
@@ -40,7 +46,7 @@ public class EmissaoCartaoConsumer {
                     "cartoes.emissao.dlq",
                     dados
             );
-
+            return;
         } catch (Exception e) {
             log.error("Erro temporário → retry: {}", e.getMessage());
             throw e; // vai para retry automaticamente
