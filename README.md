@@ -117,21 +117,6 @@ Infraestrutura:
 
 ------------------------------------------------------------
 
-## 🐳 Execução do Projeto
-
-Subir todo o ambiente:
-
-docker compose up -d --build
-
-O Docker Compose cria automaticamente:
-- Network
-- PostgreSQL + schemas
-- RabbitMQ + exchanges + filas + DLQ
-- Keycloak + realm + clients + usuários
-- Todos os microsserviços
-
-------------------------------------------------------------
-
 ## 🔐 Segurança
 
 - Autenticação via Keycloak
@@ -160,6 +145,60 @@ Fluxo:
 
 RabbitMQ Management UI:
 http://localhost:15672
+
+------------------------------------------------------------
+
+## ⚡ Como testar em 2 minutos
+
+1️⃣ Subir o ambiente:
+docker compose up --build -d
+
+2️⃣ Gerar token JWT no Keycloak
+
+3️⃣ Usar o token no Swagger ou Insomnia
+
+---
+
+## 📘 Swagger (via Gateway)
+
+🔐 Requer Bearer Token (JWT)
+
+- Clientes  
+http://localhost:8080/msclientes/swagger-ui.html
+
+- Cartões  
+http://localhost:8080/mscartoes/swagger-ui.html
+
+- Avaliador de Crédito  
+http://localhost:8080/msavaliadorcredito/swagger-ui.html
+
+---
+
+## 🧪 Insomnia (recomendado)
+
+🧠 Fluxo sugerido:
+
+Gerar o token JWT criando uma requisição GET sem URL, ir na aba Auth e escolher OAuth 2.0. E preencher os campos da seguinte forma.
+- GRANTE TYPE: Client Credentials
+- ACCESS TOKEN URL: http://localhost:8081/realms/mscourserealm/protocol/openid-connect/token
+- CLIENT ID: mscredito
+- CLIENT SECRET: 2Ng3dHOHa3Ku8dVReeqGu4Y0MntaLoFm
+
+E clicar no botão Fetch Tokens, isso vai gerar o Token para ser usado no proprio Insomnia ou no Swagger para .
+
+---
+
+## 🧠 O que este projeto demonstra ao mercado
+
+- Arquitetura real de microsserviços
+- Segurança moderna com OAuth2
+- Gateway centralizado
+- Mensageria profissional com DLQ
+- Configuração centralizada (core-config)
+- Docker Compose real (não mock)
+- Código limpo e organizado
+- Pronto para produção
+
 
 ------------------------------------------------------------
 
