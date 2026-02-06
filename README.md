@@ -145,6 +145,8 @@ Fluxo:
 
 RabbitMQ Management UI:
 http://localhost:15672
+username = bootstrap
+password = bootstrap
 
 ------------------------------------------------------------
 
@@ -184,7 +186,7 @@ Gerar o token JWT criando uma requisição GET sem URL, ir na aba Auth e escolhe
 - CLIENT ID: mscredito
 - CLIENT SECRET: 2Ng3dHOHa3Ku8dVReeqGu4Y0MntaLoFm
 
-E clicar no botão Fetch Tokens, isso vai gerar o Token para ser usado no proprio Insomnia ou no Swagger para .
+E clicar no botão Fetch Tokens, isso vai gerar o Token para ser usado no proprio Insomnia ou no Swagger, isso funciona no Intellij e no container.
 
 ---
 
