@@ -31,6 +31,21 @@ Tudo é criado automaticamente ao subir o Docker Compose.
 
 ## 🧱 Arquitetura do Sistema
 
+```
+avaliador_de_credito/
+├── core-config
+├── eurekaserver
+├── mscloudgateway
+├── msclientes
+├── mscartoes
+├── msavaliadorcredito
+├── docker
+│   ├── keycloak
+│   └── rabbitmq
+├── docker-compose.yml
+└── .github/workflows/ci.yml
+```
+
 Módulos principais:
 
 - eurekaserver  
@@ -145,23 +160,6 @@ Fluxo:
 
 RabbitMQ Management UI:
 http://localhost:15672
-
-------------------------------------------------------------
-
-## 📦 Estrutura do Projeto
-
-avaliador_de_credito/
-├── core-config
-├── eurekaserver
-├── mscloudgateway
-├── msclientes
-├── mscartoes
-├── msavaliadorcredito
-├── docker
-│   ├── keycloak
-│   └── rabbitmq
-├── docker-compose.yml
-└── .github/workflows/ci.yml
 
 ------------------------------------------------------------
 
