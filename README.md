@@ -115,6 +115,8 @@ Infraestrutura:
 - Controle de versão com Flyway
 - Criação automática de tabelas e schemas
 
+Obs: Para usar esse banco junto com o Intellij é preciso instalar e abrir o Postgre, colocar nele o usuário como 'postgres', e senha 'admin'. E criar o banco de dados com nome  'avaliador_credito'. Feito isso quando você der o run pela primeira vez o flyway vai verificar se as tabelas já existem, se existe não faz nada, mas se não existir vai criar as tabelas e todas as colunas. Depois disso é só inserir dados.
+
 ------------------------------------------------------------
 
 ## 🔐 Segurança
@@ -145,8 +147,8 @@ Fluxo:
 
 RabbitMQ Management UI:
 http://localhost:15672
-username = bootstrap
-password = bootstrap
+- username = bootstrap
+- password = bootstrap
 
 ------------------------------------------------------------
 
@@ -187,33 +189,6 @@ Gerar o token JWT criando uma requisição GET sem URL, ir na aba Auth e escolhe
 - CLIENT SECRET: 2Ng3dHOHa3Ku8dVReeqGu4Y0MntaLoFm
 
 E clicar no botão Fetch Tokens, isso vai gerar o Token para ser usado no proprio Insomnia ou no Swagger, isso funciona no Intellij e no container.
-
----
-
-## 🧠 O que este projeto demonstra ao mercado
-
-- Arquitetura real de microsserviços
-- Segurança moderna com OAuth2
-- Gateway centralizado
-- Mensageria profissional com DLQ
-- Configuração centralizada (core-config)
-- Docker Compose real (não mock)
-- Código limpo e organizado
-- Pronto para produção
-
-
-------------------------------------------------------------
-
-## 🎯 Objetivo do Projeto
-
-Este projeto demonstra para recrutadores:
-
-- Arquitetura de microsserviços real
-- Segurança moderna com JWT e Keycloak
-- Mensageria resiliente com Retry e DLQ
-- Configuração centralizada
-- Infraestrutura automatizada
-- Padrões prontos para produção
 
 ------------------------------------------------------------
 
