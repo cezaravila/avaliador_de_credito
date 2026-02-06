@@ -1,232 +1,182 @@
 # Avaliador de Crédito – Microsserviços
 ![Build Status](https://github.com/cezaravila/avaliador_de_credito/actions/workflows/ci.yml/badge.svg)
 
-Projeto profissional de microsserviços voltado para demonstração em portfólio, incluindo:
+Projeto profissional de microsserviços desenvolvido para portfólio, seguindo padrões reais de mercado, com foco em arquitetura, segurança, mensageria e automação de infraestrutura.
 
-- Arquitetura distribuída
-- Eureka Service Discovery
-- API Gateway
-- Spring Cloud OpenFeign
-- Microsserviços isolados
-- Perfis DEV e PRODUÇÃO
-- Autenticação Bearer Token (JWT)
-- Execução local (IntelliJ) e Docker
-- Pipeline CI com GitHub Actions
+Todo o ambiente é provisionado automaticamente via Docker Compose, sem necessidade de configuração manual.
+
+------------------------------------------------------------
+
+## ✅ Pré-requisitos
+
+- Java 17+
+- Maven 3.9+
+- Docker
+- Docker Compose
+- PostgreSQL (executado via Docker)
+
+⚠️ Importante  
+Não é necessário configurar manualmente:
+- Banco de dados
+- Schemas
+- Filas
+- Exchanges
+- DLQ
+- Keycloak
+- Usuários ou credenciais
+
+Tudo é criado automaticamente ao subir o Docker Compose.
 
 ------------------------------------------------------------
 
 ## 🧱 Arquitetura do Sistema
 
-- **eurekaserver** → Service Discovery
-- **msclientes** → gerenciamento de clientes
-- **mscartoes** → cartões e limites
-- **msavaliadorcredito** → avaliação de crédito
-- **mscloudgateway** → API Gateway que centraliza chamadas
-- **core-config** → configurações compartilhadas
-- **keycloak** → autenticação e autorização (JWT)
-- **rabbitmq** → mensageria assíncrona entre microsserviços
+Módulos principais:
 
-Fluxo:
-1. Cliente chama Gateway (+ token)
-2. Gateway valida autenticação (DEV ou PROD)
-3. Gateway encaminha para msavaliadorcredito
-4. msavaliadorcredito usa Feign para chamar msclientes e mscartoes
-5. Retorno agregado e padronizado
+- eurekaserver  
+  Service Discovery (Eureka)
+
+- mscloudgateway  
+  API Gateway + Segurança
+
+- msclientes  
+  Gerenciamento de clientes
+
+- mscartoes  
+  Gerenciamento de cartões e limites
+
+- msavaliadorcredito  
+  Avaliação de crédito e orquestração
+
+- core-config  
+  Configurações centralizadas reutilizáveis:
+  - Segurança (JWT)
+  - RabbitMQ
+  - OpenAPI / Swagger
+
+Infraestrutura:
+
+- PostgreSQL
+- RabbitMQ (Retry + DLQ)
+- Keycloak (OAuth2 / JWT)
+
+------------------------------------------------------------
+
+## 🔁 Fluxo Principal
+
+1. Cliente acessa o Gateway com Bearer Token
+2. Gateway valida o token no Keycloak
+3. Requisição é roteada para o microsserviço
+4. Comunicação síncrona via OpenFeign
+5. Eventos assíncronos via RabbitMQ
+6. Falhas transitórias usam Retry
+7. Falhas permanentes vão para DLQ
 
 ------------------------------------------------------------
 
 ## ⚙️ Tecnologias Utilizadas
 
-- **Java 17**
-- **Spring Boot 3.4.1**
-- **Spring Cloud 2023**
-- **Spring Security (JWT/Bearer)**
-- **OpenFeign**
-- **Eureka Server**
-- **Docker + Docker Compose**
-- **PostgreSQL**
-- **Flyway**
-- **RabbitMQ**
-- **Keycloak**
-- **GitHub Actions (CI)**
+- Java 17
+- Spring Boot 3.4.x
+- Spring Cloud
+- Spring Security
+- OAuth2 / JWT
+- OpenFeign
+- Eureka Server
+- RabbitMQ
+- PostgreSQL
+- Flyway
+- Keycloak
+- Docker
+- Docker Compose
+- GitHub Actions (CI)
 
 ------------------------------------------------------------
 
-## 🗄️ Banco de Dados (sql-version)
+## 🗄️ Banco de Dados
 
-A branch `sql-version` utiliza **PostgreSQL** e controla o schema via **Flyway**.
-
-- DEV e PRODUÇÃO usam PostgreSQL (muda apenas o hostname/URL de conexão)
-- Versionamento de schema com migrations SQL (Flyway)
-- Hibernate não cria/atualiza tabelas automaticamente: o schema vem das migrations
-- Um schema por microsserviço:
-  - `msclientes` → schema `msclientes`
-  - `mscartoes` → schema `mscartoes`
-
-### Migrations (Flyway)
-- Local: `src/main/resources/db/migration`
-- `V1__*.sql` → criação inicial (NUNCA editar depois de aplicado)
-- Mudanças futuras: `V2__*.sql`, `V3__*.sql`, ...
+- PostgreSQL executado via Docker
+- Um schema por microsserviço
+- Controle de versão com Flyway
+- Criação automática de tabelas e schemas
 
 ------------------------------------------------------------
 
-## 🚀 Execução em Ambiente DEV (IntelliJ)
+## 🐳 Execução do Projeto
 
-Cada microsserviço deve ser executado com:
+Subir todo o ambiente:
 
-SPRING_PROFILES_ACTIVE=dev
-
-**No IntelliJ:**
-1. Criar Run Configuration do tipo *Spring Boot*
-2. Adicionar:
-   - Em *Environment Variables*: `SPRING_PROFILES_ACTIVE=dev`
-   - ou em *VM Options*: `-Dspring.profiles.active=dev`
-3. Executar nessa ordem:
-   1. eurekaserver
-   2. msclientes
-   3. mscartoes
-   4. msavaliadorcredito
-   5. mscloudgateway
-
-### 🔗 URLs DEV
-- Eureka: http://localhost:8761  
-- Gateway: http://localhost:8080  
-- Swagger de cada serviço:
-  - msclientes → http://localhost:8082/swagger-ui.html  
-  - mscartoes → http://localhost:8083/swagger-ui.html  
-  - msavaliadorcredito → http://localhost:8084/swagger-ui.html
-
-------------------------------------------------------------
-
-## 🐳 Execução em PRODUÇÃO (Docker)
-
-No Docker, o profile muda para:
-
-SPRING_PROFILES_ACTIVE=production
-
-### ▶️ Subir toda stack
 docker compose up -d --build
 
-### 🔗 URLs PRODUÇÃO
-- Eureka → http://localhost:8761
-- Gateway → http://localhost:8080/swagger-ui.html
+O Docker Compose cria automaticamente:
+- Network
+- PostgreSQL + schemas
+- RabbitMQ + exchanges + filas + DLQ
+- Keycloak + realm + clients + usuários
+- Todos os microsserviços
 
 ------------------------------------------------------------
 
-## 🔐 Segurança (JWT / Bearer Token)
+## 🔐 Segurança
 
-### DEV
-- Segurança simplificada
-- Basic Auth via Spring Security
-- Swagger liberado
-
-### PRODUÇÃO
-- Autenticação e autorização via **Keycloak**
-- Tokens JWT (Bearer Token)
-- Swagger protegido
-- Feign repassa automaticamente o Bearer Token
-
-```
-Authorization: Bearer SEU_TOKEN_AQUI
-```
+- Autenticação via Keycloak
+- Tokens JWT
+- Gateway protegido
+- Microsserviços validam JWT
+- Propagação automática de token via Feign
+- Swagger protegido (DEV e PROD)
 
 ------------------------------------------------------------
 
-## 🔐 Como usar o Keycloak (gerar token)
+## 🐰 RabbitMQ – Retry e DLQ
 
-O projeto utiliza **Keycloak** para autenticação baseada em JWT.
+Implementado padrão de mercado:
 
-### Acessar o Keycloak
-- Console: http://localhost:8081
+- Exchange principal
+- Fila principal
+- Fila de retry (com TTL)
+- Dead Letter Queue (DLQ)
 
-### Fluxo básico
-1. Autentique no Keycloak
-2. Obtenha o `access_token`
-3. Envie o token nas requisições:
+Fluxo:
+- Erro transitório → Retry automático
+- Erro permanente → Mensagem enviada para DLQ
 
-```
-Authorization: Bearer SEU_TOKEN_AQUI
-```
-
-> Observação: os detalhes de Realm/Client/Usuários dependem do seu `docker-compose.yml` e das configurações do Keycloak no projeto.
+RabbitMQ Management UI:
+http://localhost:15672
 
 ------------------------------------------------------------
 
-## 🐰 Como usar o RabbitMQ (validar mensageria)
-
-O projeto utiliza **RabbitMQ** para mensageria assíncrona entre microsserviços.
-
-### Acessar o painel do RabbitMQ
-- Management UI: http://localhost:15672
-
-### O que observar
-- Filas/exchanges criados pela aplicação
-- Mensagens sendo publicadas/consumidas durante o fluxo do sistema
-
-> Observação: usuário/senha do painel estão definidos no `docker-compose.yml`.
-
-------------------------------------------------------------
-
-## 🧪 Testes
-
-### Testes unitários mínimos foram adicionados em cada módulo:
-
-Exemplo:
-@SpringBootTest
-class MscartoesApplicationTests {
-    @Test
-    void contextLoads() {}
-}
-
-Eles garantem que o ApplicationContext inicializa sem erros.
-
-------------------------------------------------------------
-
-## 🤖 CI/CD – GitHub Actions
-
-Arquivo:
-.github/workflows/ci.yml
-
-Pipeline executa:
-- mvn clean verify
-- valida a build completa
-- badge automático no README
-
-Badge Markdown:
-![Build Status](https://github.com/cezaravila/avaliador_de_credito/actions/workflows/ci.yml/badge.svg)
-
-------------------------------------------------------------
-
-## 📦 Estrutura do Repositório
+## 📦 Estrutura do Projeto
 
 avaliador_de_credito/
-├── core-config  
-├── eurekaserver  
-├── msclientes  
-├── mscartoes  
-├── msavaliadorcredito  
-├── mscloudgateway  
-├── docker-compose.yml  
-└── .github/workflows/ci.yml  
+├── core-config
+├── eurekaserver
+├── mscloudgateway
+├── msclientes
+├── mscartoes
+├── msavaliadorcredito
+├── docker
+│   ├── keycloak
+│   └── rabbitmq
+├── docker-compose.yml
+└── .github/workflows/ci.yml
 
 ------------------------------------------------------------
 
-## 📚 Objetivo do Projeto
+## 🎯 Objetivo do Projeto
 
-Este projeto foi construído com foco em **portfólio profissional**, seguindo padrões reais do mercado:
+Este projeto demonstra para recrutadores:
 
-- microsserviços independentes  
-- comunicação via OpenFeign  
-- discovery com Eureka  
-- autenticação JWT (Keycloak)  
-- mensageria assíncrona (RabbitMQ)  
-- execução em múltiplos ambientes  
-- CI automatizado  
-
-Excelente demonstração de arquitetura moderna para entrevistas.
+- Arquitetura de microsserviços real
+- Segurança moderna com JWT e Keycloak
+- Mensageria resiliente com Retry e DLQ
+- Configuração centralizada
+- Infraestrutura automatizada
+- Padrões prontos para produção
 
 ------------------------------------------------------------
 
 ## 👨‍💻 Autor
+
 Cezar de Oliveira Avila  
-Campo Grande – MS  
+Campo Grande – MS
