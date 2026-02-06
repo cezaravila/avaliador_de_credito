@@ -49,10 +49,10 @@ Módulos principais:
   Avaliação de crédito e orquestração
 
 - core-config  
-  Configurações centralizadas reutilizáveis:
-  - Segurança (JWT)
-  - RabbitMQ
-  - OpenAPI / Swagger
+  Módulo de infraestrutura compartilhada contendo:
+  - Configuração centralizada do RabbitMQ (exchanges, filas, retry, DLQ)
+  - Configuração de segurança (JWT / OAuth2)
+  - Configuração base de Swagger/OpenAPI
 
 Infraestrutura:
 
@@ -130,7 +130,9 @@ O Docker Compose cria automaticamente:
 
 ## 🐰 RabbitMQ – Retry e DLQ
 
-Implementado padrão de mercado:
+Toda a configuração de mensageria (exchanges, filas, retry e DLQ)
+é centralizada no módulo core-config e compartilhada entre os
+microsserviços.
 
 - Exchange principal
 - Fila principal
