@@ -164,13 +164,13 @@ docker compose up --build -d
 🔐 Requer Bearer Token (JWT)
 
 - Clientes  
-http://localhost:8080/msclientes/swagger-ui.html
+http://localhost:8082/msclientes/swagger-ui.html
 
 - Cartões  
-http://localhost:8080/mscartoes/swagger-ui.html
+http://localhost:8083/mscartoes/swagger-ui.html
 
 - Avaliador de Crédito  
-http://localhost:8080/msavaliadorcredito/swagger-ui.html
+http://localhost:8084/msavaliadorcredito/swagger-ui.html
 
 ---
 
