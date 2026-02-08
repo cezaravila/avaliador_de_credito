@@ -110,12 +110,22 @@ Infraestrutura:
 
 ## 🗄️ Banco de Dados
 
-- PostgreSQL executado via Docker
+### Modo Docker (recomendado)
+- PostgreSQL executado automaticamente via Docker Compose
 - Um schema por microsserviço
 - Controle de versão com Flyway
 - Criação automática de tabelas e schemas
 
-Obs: Para usar esse banco junto com o Intellij é preciso instalar e abrir o Postgre, colocar nele o usuário como 'postgres', e senha 'admin'. E criar o banco de dados com nome  'avaliador_credito'. Feito isso quando você der o run pela primeira vez o flyway vai verificar se as tabelas já existem, se existe não faz nada, mas se não existir vai criar as tabelas e todas as colunas. Depois disso é só inserir dados.
+Nenhuma configuração manual é necessária.
+
+### Modo local (opcional – IntelliJ)
+Caso queira rodar os microsserviços fora do Docker:
+- PostgreSQL local
+- Usuário: `postgres`
+- Senha: `admin`
+- Banco: `avaliador_credito`
+
+Ao iniciar a aplicação, o Flyway verifica e cria as tabelas automaticamente, se necessário.
 
 ------------------------------------------------------------
 
@@ -161,13 +171,20 @@ docker compose up --build -d
 
 3️⃣ Usar o token no Swagger ou Insomnia
 
-4️⃣ Se for usar no Intellij dar o stop nos containers, dixando apenas os containers do keycloak e rabbitmq rodando
+4️⃣ Se for usar no Intellij:
+
+- Pare os containers dos microsserviços
+
+- Mantenha apenas Keycloak e RabbitMQ ativos
 
 ---
 
 ## 📘 Swagger (via Gateway)
 
 🔐 Requer Bearer Token (JWT)
+
+Obs: Em ambiente Docker, cada microsserviço expõe sua própria porta.
+Em produção real, o acesso seria exclusivamente via Gateway.
 
 - Clientes  
 http://localhost:8082/msclientes/swagger-ui.html
