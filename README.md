@@ -161,6 +161,8 @@ docker compose up --build -d
 
 3️⃣ Usar o token no Swagger ou Insomnia
 
+4️⃣ Se for usar no Intellij dar o stop nos containers, dixando apenas os containers do keycloak e rabbitmq
+
 ---
 
 ## 📘 Swagger (via Gateway)
