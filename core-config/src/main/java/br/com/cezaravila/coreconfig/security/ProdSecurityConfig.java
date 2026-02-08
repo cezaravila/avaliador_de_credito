@@ -7,25 +7,20 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+
 import static org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type.SERVLET;
 
 @Configuration
 @Profile("production")
-@ConditionalOnWebApplication(type = SERVLET)
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class ProdSecurityConfig {
-    private static final String[] SWAGGER_PUBLIC = {
-            "/swagger-ui/**",
-            "/swagger-ui.html",
-            "/v3/api-docs/**",
-            "/swagger-resources/**",
-            "/webjars/**"
-    };
+
     @Bean
     SecurityFilterChain prodSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(SWAGGER_PUBLIC).permitAll()
+                        .requestMatchers(SecurityPaths.SWAGGER_PUBLIC).permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));

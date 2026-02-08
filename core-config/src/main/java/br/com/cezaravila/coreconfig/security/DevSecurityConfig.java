@@ -11,7 +11,7 @@ import static org.springframework.boot.autoconfigure.condition.ConditionalOnWebA
 
 @Configuration
 @Profile("dev")
-@ConditionalOnWebApplication(type = SERVLET)
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class DevSecurityConfig {
 
     @Bean
@@ -19,13 +19,10 @@ public class DevSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Swagger também protegido (JWT)
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers(SecurityPaths.SWAGGER_PUBLIC).permitAll()
                         .anyRequest().authenticated()
                 )
-                // DEV = JWT também (para funcionar via Gateway com Bearer)
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
-
         return http.build();
     }
 }
